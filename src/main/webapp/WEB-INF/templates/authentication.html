@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>	
+
+<div th:replace="~{/components/header}"></div>
+
+<title>Authentication</title>
+</head>
+<body class="bg-light">
+	<div class="container">
+		<div class="row align-items-start">
+
+			<div class="col-6 bg-dark m-auto mt-3 p-3 border border-5 border-secondary rounded-3" >
+						<h2 class="text-center pt-3 text-success">Weather</h2>
+				<form role="form" class="m-auto" th:method="post" th:action="@{/authentication}">
+
+
+					<div th:replace="~{/components/input_field_login}"></div>
+
+
+
+						<div th:if="${#objects.nullSafe(error,false)}">
+							<div id="loginHelpBlock" class="form-text text-danger mb-3" th:text="${error.getMessage()}"></div>
+						</div>
+					
+					<div class="input-group mb-3">
+					<button type="submit" class="btn btn-success form-control">Sign in</button>
+					</div>	
+				</form>
+				<div >
+					<form th:method="GET" th:action="@{/registration}">
+						<button type="submit" class="btn btn-primary">Sign up</button>
+					</form>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+	<div th:replace="~{/components/footer}"></div>
+
+</body>
+</html>

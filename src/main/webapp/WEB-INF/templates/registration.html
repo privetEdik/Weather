@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+	<div th:replace="~{/components/header}"></div>
+
+<title>Registration</title>
+</head>
+<body class="bg-light">
+	<div class="container">
+		<div class="row align-items-start">
+
+			<div class="col-6 bg-dark m-auto mt-3 p-3 border border-5 border-secondary rounded-3" >
+						<h2 class="text-center pt-3 text-success">Weather</h2>
+				<form role="form" class="m-auto" th:method="POST" th:action="@{/registration}">
+
+
+					<div th:replace="~{/components/input_field_login}"></div>
+
+					<div th:if="${#objects.nullSafe(error,false)}">
+
+						<div th:if="${#strings.equals(error.getCode(),'400')}">
+						<div id="loginHelpBlock" class="form-text text-danger mb-3" th:text="${error.getMessage()}">ss</div>
+						</div>
+					</div>
+
+					<div class="row mb-1">
+						<label for="password" class="col-form-label text-success">Password:</label>
+						<div class="input-group">
+						<input type="password" id="password" class="form-control" aria-describedby="passwordHelpBlock" name="password" placeholder="Password entry field">
+						</div>
+					</div>
+
+					<div th:if="${#objects.nullSafe(error,false)}">
+						<div th:if="${#strings.equals(error.getCode(),'401')}">
+							<!-- <div th:text="${errors[0].getCode()}">login_invalid_code_error</div> -->
+						<div id="passwordHelpBlock" class="form-text text-danger mb-3" th:text="${error.getMessage()}">ss</div>
+						</div>
+					</div>
+					
+					<div class="input-group mb-3">
+					<button type="submit" class="btn btn-success form-control">Sign up</button>
+					</div>
+					<div th:unless="${#strings.isEmpty(success)}">
+						<div class="form-text text-align-center text-success mb-3" th:text="${success}"></div>
+					</div>
+				</form>
+				<div >
+					<form th:method="GET" th:action="@{/authentication}">
+						<button type="submit" class="btn btn-primary">Sign in</button>
+					</form>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+	<div th:replace="~{/components/footer}"></div>
+
+</body>
+</html>

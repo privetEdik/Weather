@@ -1,0 +1,12 @@
+<div class="container">
+    <div class="row justify-content-around mb-3">
+        <div class="col-auto">
+            <label for="outLogin" class="col-form-label text-success" th:text="${login}" >LoginName</label>
+        </div>
+        <div class="col-auto">
+            <form th:method="GET" th:action="@{/main}">
+                <button type="submit" id="outLogin" value="1" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+</div>

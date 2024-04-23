@@ -1,0 +1,20 @@
+<form role="form" class="m-auto" th:method="post" th:action="@{/main}">
+    <div class="row mb-1">
+        <label for="location" class="col-form-label text-success">Add location:</label>
+        <div class="input-group">
+            <input type="text" id="location" class="form-control" aria-describedby="locationHelpBlock" name="nameTown" placeholder="City name">
+        </div>
+    </div>
+
+    <div th:if="${#objects.nullSafe(error,false)}">
+
+        <div id="locationHelpBlock" class="form-text text-danger mb-3" th:text="${error.getMessage()}">ss</div>
+
+    </div>
+    <div>
+
+        <button type="submit" class="form-control btn btn-success" name="login" th:value="${login}">Find</button>
+    </div>
+
+
+</form>
