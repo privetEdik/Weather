@@ -6,5 +6,5 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Clouds {
-	private String all;
+    private String all;
 }

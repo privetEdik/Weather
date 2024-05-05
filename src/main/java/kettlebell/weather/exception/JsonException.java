@@ -2,9 +2,8 @@ package kettlebell.weather.exception;
 
 import kettlebell.weather.validator.Error;
 
-public class UserNotFoundException extends AppException {
-    public UserNotFoundException(Error error) {
+public class JsonException extends AppException {
+    public JsonException(Error error) {
         super(error);
     }
-
 }

@@ -11,34 +11,35 @@ import org.hibernate.exception.ConstraintViolationException;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LocationRepositoryDb extends EntityRepositoryDb implements BaseDao<Long, Location> {
-	private static final LocationRepositoryDb INSTANCE = new LocationRepositoryDb();
+    private static final LocationRepositoryDb INSTANCE = new LocationRepositoryDb();
 
-	public static LocationRepositoryDb getInstance() {
-		return INSTANCE;
-	}
-	@Override
-	public void save(Location entity) throws EntityAlreadyExistsException{
-		try {
-			executeInTransaction(session -> {
-				User user = session.find(User.class,entity.getUser().getId());
+    public static LocationRepositoryDb getInstance() {
+        return INSTANCE;
+    }
 
-				user.addLocation(entity);
+    @Override
+    public void save(Location entity) throws EntityAlreadyExistsException {
+        try {
+            executeInTransaction(session -> {
+                User user = session.find(User.class, entity.getUser().getId());
 
-				session.persist(entity);
-			});
-		}catch (ConstraintViolationException e){
+                user.addLocation(entity);
 
-			throw new EntityAlreadyExistsException(Error.of("Location already exists"));
-		}
+                session.persist(entity);
+            });
+        } catch (ConstraintViolationException e) {
 
-	}
+            throw new EntityAlreadyExistsException(Error.of("Location already exists"));
+        }
 
-	@Override
-	public void delete(Location entity) {
-		executeInTransaction(session -> {
-			Location location = session.find(Location.class,entity.getId());
-			session.remove(location);
-		});
-	}
+    }
+
+    @Override
+    public void delete(Location entity) {
+        executeInTransaction(session -> {
+            Location location = session.find(Location.class, entity.getId());
+            session.remove(location);
+        });
+    }
 
 }

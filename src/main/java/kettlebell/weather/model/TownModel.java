@@ -8,10 +8,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TownModel {
-	private String name;
-	private Map<String, String> local_names;
-	private String lat;
-	private String lon;
-	private String country;
-	private String state;
+    private String name;
+    private Map<String, String> local_names;
+    private String lat;
+    private String lon;
+    private String country;
+    private String state;
 }

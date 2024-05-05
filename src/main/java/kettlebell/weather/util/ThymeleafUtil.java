@@ -19,40 +19,36 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ThymeleafUtil {
-	INSTANCE;
-	private static TemplateEngine ENGINE;
-	
-	public void buildTemplateEngineInstance(ServletContext context) {
-		ENGINE = new TemplateEngine();
-		IWebApplication application = JakartaServletWebApplication.buildApplication(context);
-		ITemplateResolver resolver = buildTemplateResolver(application);
-		ENGINE.addTemplateResolver(resolver);
-	}
-	
-//	public static ThymeleafUtil getInstance() {
-//		return INSTANCE;
-//	}
-	
-	public TemplateEngine getTemplateEngine() {
-		return ENGINE;
-	}
-	
-	public static WebContext buildWebContext(HttpServletRequest request, HttpServletResponse response) {
-		ServletContext context = request.getServletContext();
-		JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(context);
-		IServletWebExchange webExchange = application.buildExchange(request, response);
-		return new WebContext(webExchange);
-	}
-	
+    INSTANCE;
+    private static TemplateEngine ENGINE;
 
-	private static ITemplateResolver buildTemplateResolver(IWebApplication application) {
-		WebApplicationTemplateResolver templateResolver = new WebApplicationTemplateResolver(application);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
-		templateResolver.setSuffix(".html");
-		templateResolver.setCacheTTLMs(0L);
-		templateResolver.setPrefix("WEB-INF/templates/");
-		
-		return templateResolver;
-	}
+    public void buildTemplateEngineInstance(ServletContext context) {
+        ENGINE = new TemplateEngine();
+        IWebApplication application = JakartaServletWebApplication.buildApplication(context);
+        ITemplateResolver resolver = buildTemplateResolver(application);
+        ENGINE.addTemplateResolver(resolver);
+    }
+
+    public TemplateEngine getTemplateEngine() {
+        return ENGINE;
+    }
+
+    public static WebContext buildWebContext(HttpServletRequest request, HttpServletResponse response) {
+        ServletContext context = request.getServletContext();
+        JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(context);
+        IServletWebExchange webExchange = application.buildExchange(request, response);
+        return new WebContext(webExchange);
+    }
+
+
+    private static ITemplateResolver buildTemplateResolver(IWebApplication application) {
+        WebApplicationTemplateResolver templateResolver = new WebApplicationTemplateResolver(application);
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        templateResolver.setSuffix(".html");
+        templateResolver.setCacheTTLMs(0L);
+        templateResolver.setPrefix("WEB-INF/templates/");
+
+        return templateResolver;
+    }
 }

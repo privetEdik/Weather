@@ -10,8 +10,8 @@ import java.util.function.Function;
 public class EntityRepositoryDb {
     private static final SessionFactory sessionFactory = HibernateRunner.getInstanceSessionFactory();
 
-    public void executeInTransaction(Consumer<Session> operation){
-        try(Session session = sessionFactory.openSession()){
+    public void executeInTransaction(Consumer<Session> operation) {
+        try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
             operation.accept(session);
@@ -21,8 +21,8 @@ public class EntityRepositoryDb {
         }
     }
 
-    public <T> T executeInTransactionAndReturn(Function<Session, T> operation){
-        try(Session session = sessionFactory.openSession()){
+    public <T> T executeInTransactionAndReturn(Function<Session, T> operation) {
+        try (Session session = sessionFactory.openSession()) {
             return operation.apply(session);
         }
     }

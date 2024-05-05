@@ -5,9 +5,8 @@ import kettlebell.weather.validator.Error;
 
 public class ValidationException extends AppException {
 
-	public ValidationException(Error error) {
-		super(error);
-		
-	}
+    public ValidationException(Error error) {
+        super(error);
+    }
 
 }

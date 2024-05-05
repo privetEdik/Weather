@@ -27,10 +27,10 @@
 
     </appender>
 
-<!--    <logger name="kettlebell" additivity="false">-->
-<!--        <level value="debug"/>-->
-<!--        <appender-ref ref="console"/>-->
-<!--    </logger>-->
+    <!--    <logger name="kettlebell" additivity="false">-->
+    <!--        <level value="debug"/>-->
+    <!--        <appender-ref ref="console"/>-->
+    <!--    </logger>-->
 
     <root>
         <level value="info"/>

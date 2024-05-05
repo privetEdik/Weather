@@ -7,12 +7,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name = "InitialServlet",value = "/")
+@WebServlet(name = "InitialServlet", value = "/")
 public class InitialServlet extends HttpServlet {
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		response.sendRedirect("main");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.sendRedirect("main");
 
-		}
+    }
 
 }

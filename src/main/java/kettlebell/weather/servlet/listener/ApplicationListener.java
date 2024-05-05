@@ -1,4 +1,4 @@
-package kettlebell.weather.servlet;
+package kettlebell.weather.servlet.listener;
 
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -11,14 +11,14 @@ import kettlebell.weather.util.ThymeleafUtil;
 @WebListener
 public class ApplicationListener implements ServletContextListener {
 
-   public void contextInitialized(ServletContextEvent sce)  { 
-   	ThymeleafUtil.INSTANCE.buildTemplateEngineInstance(sce.getServletContext());
-	   SeanceService.getInstance().deleteExpiredSeances();
-	   LoadingBasicDataService.getInstance().loadingBasicData();
-   }
-
-    public void contextDestroyed(ServletContextEvent sce)  {
-   	 ScheduledExecutorServiceUtil.closeScheduled();
+    public void contextInitialized(ServletContextEvent sce) {
+        ThymeleafUtil.INSTANCE.buildTemplateEngineInstance(sce.getServletContext());
+        new SeanceService().deleteExpiredSeances();
+        LoadingBasicDataService.getInstance().loadingBasicData();
     }
-	
+
+    public void contextDestroyed(ServletContextEvent sce) {
+        ScheduledExecutorServiceUtil.closeScheduled();
+    }
+
 }

@@ -11,63 +11,65 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public  class SeanceRepositoryDb extends EntityRepositoryDb implements BaseDao<String,Seance> {
-	private static final SeanceRepositoryDb INSTANCE = new SeanceRepositoryDb();
+public class SeanceRepositoryDb extends EntityRepositoryDb implements BaseDao<String, Seance> {
+    private static final SeanceRepositoryDb INSTANCE = new SeanceRepositoryDb();
 
-	public static SeanceRepositoryDb getInstance() {
-		return INSTANCE;
-	}
-	@Override
-	public void save(Seance seance) {
+    public static SeanceRepositoryDb getInstance() {
+        return INSTANCE;
+    }
 
-		executeInTransaction(session -> {
-			Optional<Seance> seanceOptional = session.createQuery("from Seance as s where s.user=:user",Seance.class)
-					.setParameter("user",seance.getUser())
-					.uniqueResultOptional();
-			if(seanceOptional.isPresent()){
-				session.remove(seanceOptional.get());
-				session.flush();
-			}
-			session.persist(seance);
-		});
+    @Override
+    public void save(Seance seance) {
 
-	}
-	@Override
-	public void delete(Seance seance) {
+        executeInTransaction(session -> {
+            Optional<Seance> seanceOptional = session.createQuery("from Seance as s where s.user=:user", Seance.class)
+                    .setParameter("user", seance.getUser())
+                    .uniqueResultOptional();
+            if (seanceOptional.isPresent()) {
+                session.remove(seanceOptional.get());
+                session.flush();
+            }
+            session.persist(seance);
+        });
 
-		executeInTransaction(session -> {
-			Optional<Seance> seanceOptional = Optional.ofNullable(session.find(Seance.class,seance.getId()));
-			seanceOptional.ifPresent(session::remove);
-		} );
+    }
 
-	}
+    @Override
+    public void delete(Seance seance) {
 
-	public Seance updateOrSeanceIsOver(Seance seance) {
+        executeInTransaction(session -> {
+            Optional<Seance> seanceOptional = Optional.ofNullable(session.find(Seance.class, seance.getId()));
+            seanceOptional.ifPresent(session::remove);
+        });
 
-		return executeInTransactionAndReturn(session ->
-					Optional.ofNullable(session.find(Seance.class, seance.getId()))
-							.map(s->{
-								s.setTime(seance.getTime());
-								session.merge(s);
-								return s;
-							})
-							.orElseThrow(()-> new SeanceEndedException(Error.of("Your session has ended please authenticate")))
+    }
 
-		);
-	}
+    public Seance updateOrSeanceIsOver(Seance seance) {
 
-	public Seance findById(String keySeance) {
+        return executeInTransactionAndReturn(session ->
+                Optional.ofNullable(session.find(Seance.class, seance.getId()))
+                        .map(s -> {
+                            s.setTime(seance.getTime());
+                            session.merge(s);
+                            return s;
+                        })
+                        .orElseThrow(() -> new SeanceEndedException(Error.of("Your session has ended please authenticate")))
 
-		return executeInTransactionAndReturn(session -> session.find(Seance.class,keySeance));
+        );
+    }
 
-	}
+    public Seance findById(String keySeance) {
 
-	public void clearSeance() {
+        return executeInTransactionAndReturn(session -> session.find(Seance.class, keySeance));
 
-		executeInTransaction(session -> session.createMutationQuery("delete from Seance where time < :time_now")
-				.setParameter("time_now",LocalDateTime.now())
-				.executeUpdate());
+    }
 
-	}
+    public void clearSeance() {
+
+        executeInTransaction(session -> session.createMutationQuery("delete from Seance where time < :time_now")
+                .setParameter("time_now", LocalDateTime.now())
+                .executeUpdate());
+
+    }
 
 }
