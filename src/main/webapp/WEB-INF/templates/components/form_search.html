@@ -1,4 +1,10 @@
-<form role="form" class="m-auto" th:method="post" th:action="@{/main}">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{/components/header}"></div>
+</head>
+<body>
+<form th:fragment="section_form_search"  role="form" class="m-auto" th:method="post" th:action="@{/main}">
     <div class="row mb-1">
         <label for="location" class="col-form-label text-success">Add location:</label>
         <div class="input-group">
@@ -17,5 +23,6 @@
         <button type="submit" class="form-control btn btn-success" name="login" th:value="${login}">Find</button>
     </div>
 
-
 </form>
+</body>
+</html>

@@ -1,21 +1,45 @@
 package kettlebell.weather.storage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import kettlebell.weather.dto.LocationDto;
+import kettlebell.weather.dto.user.LocationDto;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public enum LocationStorageInstance {
-    INSTANCE;
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class LocationStorageInstance {
+   // INSTANCE;
 
-    private static Map<String, List<LocationDto>> map;
+    private static volatile LocationStorageInstance INSTANCE;
 
-    public List<LocationDto> getInstance(String uuid) {
-        if (map == null) {
-            map = new HashMap<>();
+    private static  Map<String, List<LocationDto>> map/* = new HashMap<>()*/;
+
+//    public static List<LocationDto> getInstance(String uuid) {
+//        if (map == null) {
+//            map = new HashMap<>();
+//
+//        }
+//        if (map.containsKey(uuid)) {
+//            return map.get(uuid);
+//        } else {
+//            List<LocationDto> locationDtos = new ArrayList<>();
+//            map.put(uuid, locationDtos);
+//
+//            return locationDtos;
+//        }
+//
+//    }
+
+    public static List<LocationDto> getInstance(String uuid) {
+        if (INSTANCE == null) {
+            synchronized (LocationStorageInstance.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new LocationStorageInstance();
+                    map = Collections.synchronizedMap(new HashMap<>());
+                }
+            }
         }
+
         if (map.containsKey(uuid)) {
             return map.get(uuid);
         } else {
@@ -25,11 +49,17 @@ public enum LocationStorageInstance {
             return locationDtos;
         }
 
+       // return null;
     }
 
-    public void clearStorage(String uuid) {
-        if (map != null) {
-            map.remove(uuid);
+    public static void clearStorage(String uuid) {
+
+        if (INSTANCE != null) {
+            synchronized (LocationStorageInstance.class) {
+                if (INSTANCE != null) {
+                    map.remove(uuid);
+                }
+            }
         }
     }
 

@@ -9,24 +9,24 @@ import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kettlebell.weather.dto.LocationDto;
-import kettlebell.weather.dto.UserDto;
-import kettlebell.weather.entity.Location;
-import kettlebell.weather.entity.Seance;
-import kettlebell.weather.entity.User;
+import kettlebell.weather.dto.user.LocationDto;
+import kettlebell.weather.dto.user.UserDto;
+import kettlebell.weather.dto.db.Location;
+import kettlebell.weather.dto.db.Seance;
+import kettlebell.weather.dto.db.User;
 import kettlebell.weather.exception.AppException;
 import kettlebell.weather.exception.JsonException;
 import kettlebell.weather.exception.validator.ValidationException;
 import kettlebell.weather.mapper.WeatherModelToLocationDto;
-import kettlebell.weather.model.weather.WeatherModel;
-import kettlebell.weather.model.weather.components.Coord;
-import kettlebell.weather.repository.http.LocationRepositoryHttp;
-import kettlebell.weather.repository.localdb.SeanceRepositoryDb;
-import kettlebell.weather.repository.localdb.UserRepositoryDb;
+import kettlebell.weather.dto.api.weather.WeatherModel;
+import kettlebell.weather.dto.api.weather.components.Coord;
+import kettlebell.weather.repository.LocationRepository;
+import kettlebell.weather.repository.SeanceRepository;
+import kettlebell.weather.repository.UserRepository;
 import kettlebell.weather.storage.LocationStorageInstance;
 import kettlebell.weather.util.PropertiesUtil;
 import kettlebell.weather.util.ScheduledExecutorServiceUtil;
-import kettlebell.weather.validator.Error;
+import kettlebell.weather.exception.Error;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
@@ -34,24 +34,24 @@ public class SeanceService {
     private static final Long SEANCE_LIFETIME = Long.parseLong(PropertiesUtil.getProperty("period_seance"));
     private static final Long CLEANING_PERIOD = Long.parseLong(PropertiesUtil.getProperty("period_cleaning"));
     private static final WeatherModelToLocationDto weatherModelToLocationDto = WeatherModelToLocationDto.getInstance();
-    private LocationRepositoryHttp locationRepositoryHttp;
-    private SeanceRepositoryDb seanceRepositoryDb;
-    private UserRepositoryDb userRepositoryDb;
+    private LocationRepository locationRepository;
+    private SeanceRepository seanceRepositoryDb;
+    private UserRepository userRepositoryDb;
     private final ObjectMapper mapper = new ObjectMapper();
 
 
-    public SeanceService(SeanceRepositoryDb seanceRepositoryDb) {
+    public SeanceService(SeanceRepository seanceRepositoryDb) {
         this.seanceRepositoryDb = seanceRepositoryDb;
     }
 
-    public SeanceService(SeanceRepositoryDb seanceRepositoryDb, UserRepositoryDb userRepositoryDb) {
+    public SeanceService(SeanceRepository seanceRepositoryDb, UserRepository userRepositoryDb) {
         this.seanceRepositoryDb = seanceRepositoryDb;
         this.userRepositoryDb = userRepositoryDb;
     }
 
-    public SeanceService(SeanceRepositoryDb seanceRepositoryDb, LocationRepositoryHttp locationRepositoryHttp) {
+    public SeanceService(SeanceRepository seanceRepositoryDb, LocationRepository locationRepository) {
         this.seanceRepositoryDb = seanceRepositoryDb;
-        this.locationRepositoryHttp = locationRepositoryHttp;
+        this.locationRepository = locationRepository;
     }
 
     public String startSeanceAndGetKey(Long idUser) {
@@ -78,13 +78,13 @@ public class SeanceService {
     public void forceDelete(String keySeance) {
 
         seanceRepositoryDb.delete(Seance.builder().id(keySeance).build());
-        LocationStorageInstance.INSTANCE.clearStorage(keySeance);
+        LocationStorageInstance.clearStorage(keySeance);
     }
 
 
     public UserDto findUserDtoFromSeance(String keySeance) throws ValidationException {
 
-        User user = seanceRepositoryDb.findById(keySeance).getUser();
+        User user = seanceRepositoryDb.findByIdWithUserAndLocations(keySeance).getUser();
 
         List<LocationDto> loc = user.getLocations().stream()
                 .sorted(Comparator.comparingLong(Location::getId))
@@ -101,7 +101,7 @@ public class SeanceService {
                     return model;
                 })
                 .map(weatherModel -> {
-                    String jsonStringResponse = locationRepositoryHttp.loadingWeatherFromTheOpenWeatherAPI(weatherModel);
+                    String jsonStringResponse = locationRepository.findJsonWeather(weatherModel);
                     try {
                         WeatherModel modelResponse = mapper.readValue(jsonStringResponse, WeatherModel.class);
                         modelResponse.setIdLocation(weatherModel.getIdLocation());

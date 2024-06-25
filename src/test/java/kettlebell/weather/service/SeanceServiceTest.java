@@ -1,13 +1,13 @@
 package kettlebell.weather.service;
 
-import kettlebell.weather.dto.LocationDto;
-import kettlebell.weather.entity.Location;
-import kettlebell.weather.entity.Seance;
-import kettlebell.weather.entity.User;
-import kettlebell.weather.model.weather.WeatherModel;
-import kettlebell.weather.repository.http.LocationRepositoryHttp;
-import kettlebell.weather.repository.localdb.SeanceRepositoryDb;
-import kettlebell.weather.util.HibernateRunner;
+import kettlebell.weather.dto.user.LocationDto;
+import kettlebell.weather.dto.db.Location;
+import kettlebell.weather.dto.db.Seance;
+import kettlebell.weather.dto.db.User;
+import kettlebell.weather.dto.api.weather.WeatherModel;
+import kettlebell.weather.repository.LocationRepository;
+import kettlebell.weather.repository.SeanceRepository;
+import kettlebell.weather.util.HibernatePropertiesFactory;
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class SeanceServiceTest {
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Location.class);
         configuration.addAnnotatedClass(Seance.class);
-        HibernateRunner.getInstanceSessionFactory(configuration);
+        HibernatePropertiesFactory.getInstanceSessionFactory(configuration);
 
     }
 
@@ -47,20 +47,20 @@ class SeanceServiceTest {
                 Location.builder().id(2L).name("Odesa").latitude(new BigDecimal("46.4843023")).longitude(new BigDecimal("30.7322878")).build()
         ));
 
-        SeanceRepositoryDb seanceRepositoryDbMock = Mockito.mock(SeanceRepositoryDb.class);
+        SeanceRepository seanceRepositoryDbMock = Mockito.mock(SeanceRepository.class);
         User user = User.builder().id(10L).login("Gary").locations(locations).build();
         Seance seance = new Seance();
         seance.setUser(user);
-        when(seanceRepositoryDbMock.findById("keySeance")).thenReturn(seance);
+        when(seanceRepositoryDbMock.findByIdWithUserAndLocations("keySeance")).thenReturn(seance);
 
-        LocationRepositoryHttp locationRepositoryHttpMock = Mockito.mock(LocationRepositoryHttp.class);
+        LocationRepository locationRepositoryMock = Mockito.mock(LocationRepository.class);
 
-        when(locationRepositoryHttpMock.loadingWeatherFromTheOpenWeatherAPI(any(WeatherModel.class))).thenReturn(jsonResponseStringMadrid);
-        when(locationRepositoryHttpMock.loadingWeatherFromTheOpenWeatherAPI(any(WeatherModel.class))).thenReturn(jsonResponseStringBerlin);
-        when(locationRepositoryHttpMock.loadingWeatherFromTheOpenWeatherAPI(any(WeatherModel.class))).thenReturn(jsonResponseStringOdesa);
+        when(locationRepositoryMock.findJsonWeather(any(WeatherModel.class))).thenReturn(jsonResponseStringMadrid);
+        when(locationRepositoryMock.findJsonWeather(any(WeatherModel.class))).thenReturn(jsonResponseStringBerlin);
+        when(locationRepositoryMock.findJsonWeather(any(WeatherModel.class))).thenReturn(jsonResponseStringOdesa);
 
 
-        SeanceService seanceService = new SeanceService(seanceRepositoryDbMock, locationRepositoryHttpMock);
+        SeanceService seanceService = new SeanceService(seanceRepositoryDbMock, locationRepositoryMock);
 
 
         List<LocationDto> list = seanceService.findUserDtoFromSeance("keySeance").getLocationDtos();

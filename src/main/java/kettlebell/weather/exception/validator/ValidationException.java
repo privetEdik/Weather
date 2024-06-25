@@ -1,7 +1,7 @@
 package kettlebell.weather.exception.validator;
 
 import kettlebell.weather.exception.AppException;
-import kettlebell.weather.validator.Error;
+import kettlebell.weather.exception.Error;
 
 public class ValidationException extends AppException {
 

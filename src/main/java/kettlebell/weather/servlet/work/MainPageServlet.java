@@ -3,21 +3,23 @@ package kettlebell.weather.servlet.work;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kettlebell.weather.dto.LocationDto;
-import kettlebell.weather.dto.UserDto;
+import kettlebell.weather.dto.user.LocationDto;
+import kettlebell.weather.dto.user.UserDto;
 import kettlebell.weather.exception.validator.ValidationException;
-import kettlebell.weather.repository.http.LocationRepositoryHttp;
-import kettlebell.weather.repository.localdb.LocationRepositoryDb;
-import kettlebell.weather.repository.localdb.SeanceRepositoryDb;
+import kettlebell.weather.repository.LocationRepository;
+import kettlebell.weather.repository.SeanceRepository;
 import kettlebell.weather.service.LocationService;
 import kettlebell.weather.service.SeanceService;
+import kettlebell.weather.validator.NameTownValidator;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.List;
 
-
+@Slf4j
 @WebServlet(name = "MainPageServlet", value = "/main")
 public class MainPageServlet extends ParentForMainAndLocationServlet {
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -26,7 +28,7 @@ public class MainPageServlet extends ParentForMainAndLocationServlet {
             doDelete(request, response);
             return;
         }
-        setSeanceService(new SeanceService(SeanceRepositoryDb.getInstance(), LocationRepositoryHttp.getInstance()));
+        setSeanceService(new SeanceService(SeanceRepository.getInstance(), LocationRepository.getInstance()));
         UserDto userDto = getSeanceService().findUserDtoFromSeance(getKeySeance());
 
         getWebContext().setVariable("login", userDto.getLogin());
@@ -39,8 +41,9 @@ public class MainPageServlet extends ParentForMainAndLocationServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ValidationException {
 
         String nameTownParam = request.getParameter("nameTown");
-
-        setLocationService(new LocationService(LocationRepositoryHttp.getInstance()));
+        log.info("nameTown : {}" , nameTownParam);
+        setLocationService(new LocationService(LocationRepository.getInstance()));
+        NameTownValidator.getInstance().isValid(nameTownParam);
         List<LocationDto> locationDtos = getLocationService().getListOfLocationsByCityName(getKeySeance(), nameTownParam);
 
         getWebContext().setVariable("login", getLoginUser());
@@ -54,7 +57,7 @@ public class MainPageServlet extends ParentForMainAndLocationServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String indexLocation = req.getParameter("idLocation");
 
-        setLocationService(new LocationService(LocationRepositoryDb.getInstance()));
+        setLocationService(new LocationService(LocationRepository.getInstance()));
         getLocationService().removeLocationWithUser(Long.valueOf(indexLocation));
 
         resp.sendRedirect("main");

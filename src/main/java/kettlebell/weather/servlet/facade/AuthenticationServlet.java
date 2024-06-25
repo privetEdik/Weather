@@ -6,16 +6,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kettlebell.weather.exception.UserNotFoundException;
 import kettlebell.weather.exception.validator.ValidationException;
-import kettlebell.weather.repository.localdb.SeanceRepositoryDb;
-import kettlebell.weather.repository.localdb.UserRepositoryDb;
+import kettlebell.weather.repository.SeanceRepository;
+import kettlebell.weather.repository.UserRepository;
 import kettlebell.weather.service.SeanceService;
 import kettlebell.weather.servlet.BaseServlet;
+import kettlebell.weather.validator.LoginValidator;
 
 import java.io.IOException;
 
 @WebServlet(name = "AuthenticationServlet", value = "/authentication")
 public class AuthenticationServlet extends BaseServlet {
-
+    //private final LoginValidator loginValidator = LoginValidator.getInstance();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
@@ -27,10 +28,11 @@ public class AuthenticationServlet extends BaseServlet {
             throws IOException {
 
         try {
+            String login = request.getParameter("login");
+            LoginValidator.getInstance().isValid(login);
+            Long idUser = getUserService().authenticateByLogin(login);
 
-            Long idUser = getUserService().authenticateByLogin(request.getParameter("login"));
-
-            setSeanceService(new SeanceService(SeanceRepositoryDb.getInstance(), UserRepositoryDb.getInstance()));
+            setSeanceService(new SeanceService(SeanceRepository.getInstance(), UserRepository.getInstance()));
             String keySeance = getSeanceService().startSeanceAndGetKey(idUser);
             Cookie cookie = new Cookie("keySeance", keySeance);
             response.addCookie(cookie);

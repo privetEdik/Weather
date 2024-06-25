@@ -1,5 +1,6 @@
 package kettlebell.weather.validator;
 
+import kettlebell.weather.exception.Error;
 import kettlebell.weather.exception.validator.ValidationException;
 import kettlebell.weather.exception.validator.heirs.LoginValidatorException;
 

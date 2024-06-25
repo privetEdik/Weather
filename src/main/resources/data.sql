@@ -1,10 +1,10 @@
-INSERT INTO weather.users(login,password) VALUES
+INSERT INTO users(login,password) VALUES
 	('Edik','5555'),
 	('John','333'),
 	('Jack','111'),
 	('Bob','666'),	
 	('Zwh','222');	
-INSERT INTO weather.locations(latitude,longitude ,name,user_id) VALUES
+INSERT INTO locations(latitude,longitude ,name,user_id) VALUES
 	(55.7504461,37.6174943,'Moscow',1),
 	(48.8588897,2.3200410217200766,'Paris',2),
 	(52.5170365,13.3888599,'Berlin',3),

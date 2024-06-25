@@ -1,27 +1,26 @@
 package kettlebell.weather.service;
 
 
-import kettlebell.weather.dto.CreateUserDto;
-import kettlebell.weather.entity.User;
+import kettlebell.weather.dto.user.CreateUserDto;
+import kettlebell.weather.dto.db.User;
 import kettlebell.weather.exception.AppException;
 import kettlebell.weather.mapper.CreateUserToUserMapper;
-import kettlebell.weather.repository.localdb.UserRepositoryDb;
-import kettlebell.weather.validator.CreateUserValidator;
-import kettlebell.weather.validator.LoginValidator;
+import kettlebell.weather.repository.UserRepository;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
     private final CreateUserToUserMapper createUserToUserMapper = CreateUserToUserMapper.getInstance();
-    private final UserRepositoryDb userRepositoryDb;
-    private final CreateUserValidator createUserValidator = CreateUserValidator.getInstance();
-    private final LoginValidator loginValidator = LoginValidator.getInstance();
+    private final UserRepository userRepositoryDb;
+
+//    private final LoginValidator loginValidator = LoginValidator.getInstance();
 
 
-    public UserService(UserRepositoryDb userRepositoryDb) {
+    public UserService(UserRepository userRepositoryDb) {
         this.userRepositoryDb = userRepositoryDb;
     }
 
     public Long authenticateByLogin(String login) throws AppException {
-        loginValidator.isValid(login);
+//        loginValidator.isValid(login);
 
         User user = userRepositoryDb.findByLogin(login);
 
@@ -29,8 +28,8 @@ public class UserService {
     }
 
     public void create(CreateUserDto createUserDto) throws AppException {
-        createUserValidator.isValid(createUserDto);
-
+        String hashedPassword = BCrypt.hashpw(createUserDto.getPassword(), BCrypt.gensalt());
+        createUserDto.setPassword(hashedPassword);
         User user = createUserToUserMapper.mapFrom(createUserDto);
         userRepositoryDb.save(user);
     }

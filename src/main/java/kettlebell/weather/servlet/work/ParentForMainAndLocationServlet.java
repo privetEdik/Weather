@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import kettlebell.weather.exception.*;
 import kettlebell.weather.exception.validator.ValidationException;
-import kettlebell.weather.repository.localdb.SeanceRepositoryDb;
+import kettlebell.weather.repository.SeanceRepository;
 import kettlebell.weather.service.LocationService;
 import kettlebell.weather.service.SeanceService;
 import kettlebell.weather.servlet.BaseServlet;
@@ -39,7 +39,7 @@ public abstract class ParentForMainAndLocationServlet extends BaseServlet {
         try {
 
             getKeySeanceFromCookie(req);
-            setSeanceService(new SeanceService(SeanceRepositoryDb.getInstance()));
+            setSeanceService(new SeanceService(SeanceRepository.getInstance()));
 
             if (req.getParameter("logout") == null) {
                 loginUser = updateSeance(keySeance);
@@ -52,10 +52,9 @@ public abstract class ParentForMainAndLocationServlet extends BaseServlet {
 
             super.service(req, resp);
         } catch (KeySeanceNotFountException e) {
-            log.debug("key not found in cookies");
+            log.info("key not found in cookies");
             resp.sendRedirect("authentication");
-        } catch (SeanceEndedException e) {
-            log.info("seance ended");
+        } catch (SeanceEndedException | KeyForApiWeatherException e) {
             setWebContext(ThymeleafUtil.buildWebContext(req, resp));
             getWebContext().setVariable("error", e.getError());
             getTemplateEngine().process("authentication", getWebContext(), resp.getWriter());

@@ -1,0 +1,25 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_USER: root
+    ports:
+      - "5433:5432"
+  tomcat:
+    restart: unless-stopped
+    build: .
+    depends_on:
+      - db
+    environment:
+      HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      HIBERNATE_DRIVER: org.postgresql.Driver
+      HIBERNATE_URL: jdbc:postgresql://db:5432/postgres
+      HIBERNATE_USERNAME: root
+      HIBERNATE_PASSWORD: 1234
+      HIBERNATE_HB2DDL: create-drop
+      KEY_FOR_WEATHER: f7dd9bb17f1d315cdf2d58f183390d1d
+    ports:
+      - "8082:8080"

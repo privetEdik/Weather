@@ -2,8 +2,8 @@ package kettlebell.weather.mapper;
 
 import java.math.BigDecimal;
 
-import kettlebell.weather.dto.LocationDto;
-import kettlebell.weather.entity.Location;
+import kettlebell.weather.dto.user.LocationDto;
+import kettlebell.weather.dto.db.Location;
 
 public class LocationDtoToLocationMapper implements Mapper<Location, LocationDto> {
     private static final LocationDtoToLocationMapper INSTANCE = new LocationDtoToLocationMapper();

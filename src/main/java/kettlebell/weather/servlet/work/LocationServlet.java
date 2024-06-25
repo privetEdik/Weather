@@ -5,8 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import kettlebell.weather.exception.AppException;
-import kettlebell.weather.repository.localdb.LocationRepositoryDb;
-import kettlebell.weather.repository.localdb.SeanceRepositoryDb;
+import kettlebell.weather.repository.LocationRepository;
+import kettlebell.weather.repository.SeanceRepository;
 import kettlebell.weather.service.LocationService;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ public class LocationServlet extends ParentForMainAndLocationServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, AppException {
         String param = request.getParameter("indexLocation");
         Integer indexLocation = param == null ? 0 : Integer.parseInt(param);
-        setLocationService(new LocationService(LocationRepositoryDb.getInstance(), SeanceRepositoryDb.getInstance()));
+        setLocationService(new LocationService(LocationRepository.getInstance(), SeanceRepository.getInstance()));
         getLocationService().addLocationForUser(getKeySeance(), indexLocation);
 
         getWebContext().setVariable("login", getLoginUser());

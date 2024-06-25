@@ -1,13 +1,13 @@
 package kettlebell.weather.service;
 
-import kettlebell.weather.dto.LocationDto;
-import kettlebell.weather.entity.Location;
-import kettlebell.weather.entity.Seance;
-import kettlebell.weather.entity.User;
+import kettlebell.weather.dto.user.LocationDto;
+import kettlebell.weather.dto.db.Location;
+import kettlebell.weather.dto.db.Seance;
+import kettlebell.weather.dto.db.User;
 import kettlebell.weather.exception.JsonException;
 import kettlebell.weather.exception.validator.heirs.NameTownValidationException;
-import kettlebell.weather.repository.http.LocationRepositoryHttp;
-import kettlebell.weather.util.HibernateRunner;
+import kettlebell.weather.repository.LocationRepository;
+import kettlebell.weather.util.HibernatePropertiesFactory;
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,19 +35,19 @@ class LocationServiceTest {
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Location.class);
         configuration.addAnnotatedClass(Seance.class);
-        HibernateRunner.getInstanceSessionFactory(configuration);
+        HibernatePropertiesFactory.getInstanceSessionFactory(configuration);
 
     }
 
     @Test
     void getListOfLocationsByCityName_Valid_NameTown() {
-        LocationRepositoryHttp repositoryHttp = Mockito.mock(LocationRepositoryHttp.class);
+        LocationRepository repository = Mockito.mock(LocationRepository.class);
 
         String nameTown = "London";
         String keySeance = UUID.randomUUID().toString();
         String jsonResponseString = "[{\"name\":\"London\",\"local_names\":{\"br\":\"Londrez\",\"kv\":\"Лондон\",\"ne\":\"?????\",\"he\":\"??????\",\"ur\":\"????? ????\",\"ca\":\"Londres\",\"yo\":\"L?nd?nu\",\"ab\":\"Лондон\",\"oc\":\"Londres\",\"ay\":\"London\",\"sm\":\"Lonetona\",\"lv\":\"Londona\",\"fo\":\"London\",\"sq\":\"Londra\",\"gd\":\"Lunnainn\",\"ga\":\"Londain\",\"yi\":\"??????\",\"jv\":\"London\",\"gl\":\"Londres\",\"sr\":\"Лондон\",\"ka\":\"???????\",\"wa\":\"Londe\",\"de\":\"London\",\"es\":\"Londres\",\"th\":\"??????\",\"av\":\"Лондон\",\"bg\":\"Лондон\",\"ml\":\"?????\",\"bn\":\"?????\",\"eu\":\"Londres\",\"rm\":\"Londra\",\"so\":\"London\",\"ff\":\"London\",\"hr\":\"London\",\"eo\":\"Londono\",\"mt\":\"Londra\",\"bm\":\"London\",\"ku\":\"London\",\"kl\":\"London\",\"sk\":\"Londyn\",\"nl\":\"Londen\",\"cv\":\"Лондон\",\"ta\":\"???????\",\"ps\":\"????\",\"qu\":\"London\",\"it\":\"Londra\",\"mn\":\"Лондон\",\"lt\":\"Londonas\",\"az\":\"London\",\"bo\":\"????????\",\"ascii\":\"London\",\"mk\":\"Лондон\",\"bs\":\"London\",\"ie\":\"London\",\"ug\":\"??????\",\"ky\":\"Лондон\",\"si\":\"??????\",\"fj\":\"Lodoni\",\"mi\":\"Ranana\",\"om\":\"Landan\",\"su\":\"London\",\"sh\":\"London\",\"bi\":\"London\",\"se\":\"London\",\"et\":\"London\",\"vi\":\"Luan Don\",\"ny\":\"London\",\"ig\":\"London\",\"my\":\"???????????\",\"is\":\"London\",\"cu\":\"Лондонъ\",\"kn\":\"?????\",\"gv\":\"Lunnin\",\"el\":\"???????\",\"tl\":\"Londres\",\"km\":\"?????\",\"pt\":\"Londres\",\"st\":\"London\",\"ko\":\"??\",\"fa\":\"????\",\"ln\":\"Lond?l?\",\"io\":\"London\",\"ht\":\"Lonn\",\"uk\":\"Лондон\",\"sl\":\"London\",\"tr\":\"Londra\",\"lo\":\"??????\",\"kk\":\"Лондон\",\"to\":\"Lonitoni\",\"pa\":\"????\",\"os\":\"Лондон\",\"ja\":\"????\",\"an\":\"Londres\",\"sn\":\"London\",\"fr\":\"Londres\",\"hi\":\"????\",\"wo\":\"Londar\",\"sv\":\"London\",\"sc\":\"Londra\",\"cy\":\"Llundain\",\"zu\":\"ILondon\",\"en\":\"London\",\"ba\":\"Лондон\",\"na\":\"London\",\"li\":\"Londe\",\"nn\":\"London\",\"am\":\"????\",\"pl\":\"Londyn\",\"sw\":\"London\",\"hy\":\"??????\",\"tk\":\"London\",\"gn\":\"Londyre\",\"bh\":\"????\",\"ha\":\"Landan\",\"ee\":\"London\",\"fi\":\"Lontoo\",\"vo\":\"London\",\"mg\":\"Londona\",\"sa\":\"??????\",\"co\":\"Londra\",\"tg\":\"Лондон\",\"kw\":\"Loundres\",\"gu\":\"????\",\"feature_name\":\"London\",\"cs\":\"Londyn\",\"be\":\"Лондан\",\"uz\":\"London\",\"ro\":\"Londra\",\"tt\":\"Лондон\",\"lb\":\"London\",\"id\":\"London\",\"mr\":\"????\",\"da\":\"London\",\"ar\":\"????\",\"no\":\"London\",\"ms\":\"London\",\"sd\":\"????\",\"nv\":\"Tooh Dine?e Bikin Haal?a\",\"ia\":\"London\",\"zh\":\"??\",\"ce\":\"Лондон\",\"af\":\"Londen\",\"te\":\"?????\",\"tw\":\"London\",\"hu\":\"London\",\"fy\":\"Londen\",\"ru\":\"Лондон\",\"or\":\"?????\"},\"lat\":51.5073219,\"lon\":-0.1276474,\"country\":\"GB\",\"state\":\"England\"},{\"name\":\"City of London\",\"local_names\":{\"lt\":\"Londono Sitis\",\"uk\":\"Лондонське Сіті\",\"pt\":\"Cidade de Londres\",\"ko\":\"?? ?? ??\",\"es\":\"City de Londres\",\"ru\":\"Сити\",\"he\":\"????? ?? ??????\",\"zh\":\"???\",\"en\":\"City of London\",\"fr\":\"Cite de Londres\",\"hi\":\"???? ??? ????\",\"ur\":\"???? ???\"},\"lat\":51.5156177,\"lon\":-0.0919983,\"country\":\"GB\",\"state\":\"England\"},{\"name\":\"London\",\"local_names\":{\"ja\":\"????\",\"yi\":\"??????\",\"oj\":\"Baketigweyaang\",\"ug\":\"??????\",\"ga\":\"Londain\",\"ka\":\"???????\",\"en\":\"London\",\"bn\":\"?????\",\"be\":\"Лондан\",\"ru\":\"Лондон\",\"lt\":\"Londonas\",\"lv\":\"Landona\",\"he\":\"??????\",\"ar\":\"????\",\"ko\":\"??\",\"cr\":\"?????\",\"fr\":\"London\",\"fa\":\"????\",\"iu\":\"????\",\"th\":\"??????\",\"el\":\"??????\",\"hy\":\"??????\"},\"lat\":42.9832406,\"lon\":-81.243372,\"country\":\"CA\",\"state\":\"Ontario\"},{\"name\":\"Chelsea\",\"local_names\":{\"az\":\"Celsi\",\"no\":\"Chelsea\",\"af\":\"Chelsea, Londen\",\"ja\":\"?????\",\"sh\":\"Chelsea, London\",\"zh\":\"???\",\"hu\":\"Chelsea\",\"nl\":\"Chelsea\",\"tr\":\"Chelsea, Londra\",\"ko\":\"??\",\"pt\":\"Chelsea\",\"da\":\"Chelsea\",\"eu\":\"Chelsea\",\"de\":\"Chelsea\",\"id\":\"Chelsea, London\",\"el\":\"??????\",\"en\":\"Chelsea\",\"pl\":\"Chelsea\",\"uk\":\"Челсі\",\"hi\":\"??????, ????\",\"sv\":\"Chelsea, London\",\"he\":\"?'???\",\"ar\":\"??????\",\"et\":\"Chelsea\",\"fr\":\"Chelsea\",\"it\":\"Chelsea\",\"sk\":\"Chelsea\",\"fa\":\"????\",\"ru\":\"Челси\",\"ga\":\"Chelsea\",\"es\":\"Chelsea\",\"ur\":\"?????? ????\",\"vi\":\"Chelsea, Luan Don\"},\"lat\":51.4875167,\"lon\":-0.1687007,\"country\":\"GB\",\"state\":\"England\"},{\"name\":\"London\",\"lat\":37.1289771,\"lon\":-84.0832646,\"country\":\"US\",\"state\":\"Kentucky\"}]\n";
-        when(repositoryHttp.loadingLocationsFromTheOpenWeatherAPI(anyString())).thenReturn(jsonResponseString);
-        locationService = new LocationService(repositoryHttp);
+        when(repository.findJsonLocations(anyString())).thenReturn(jsonResponseString);
+        locationService = new LocationService(repository);
 
         List<LocationDto> list = locationService.getListOfLocationsByCityName(keySeance, nameTown);
 
@@ -82,12 +82,12 @@ class LocationServiceTest {
 
     @Test
     void getListOfLocationsByCityName_Correct_Non_Existent_City_Name() {
-        LocationRepositoryHttp repositoryHttp = Mockito.mock(LocationRepositoryHttp.class);
+        LocationRepository repository = Mockito.mock(LocationRepository.class);
         String jsonResponseString = "{{}}";
-        when(repositoryHttp.loadingLocationsFromTheOpenWeatherAPI("qqqqqqqqqqqq")).thenReturn(jsonResponseString);
+        when(repository.findJsonLocations("qqqqqqqqqqqq")).thenReturn(jsonResponseString);
 
 
-        locationService = new LocationService(repositoryHttp);
+        locationService = new LocationService(repository);
         JsonException exception = assertThrows(JsonException.class, () -> locationService.getListOfLocationsByCityName("jjhj", "qqqqqqqqqqqq"));
         String expectedCode = "400";
         String actualCode = exception.getError().getCode();

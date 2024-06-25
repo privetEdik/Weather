@@ -1,6 +1,7 @@
 package kettlebell.weather.validator;
 
-import kettlebell.weather.dto.CreateUserDto;
+import kettlebell.weather.dto.user.CreateUserDto;
+import kettlebell.weather.exception.Error;
 import kettlebell.weather.exception.validator.ValidationException;
 import kettlebell.weather.exception.validator.heirs.PasswordValidationException;
 

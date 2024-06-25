@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-import kettlebell.weather.repository.localdb.UserRepositoryDb;
+import kettlebell.weather.repository.UserRepository;
 import kettlebell.weather.service.SeanceService;
 import kettlebell.weather.service.UserService;
 import kettlebell.weather.util.ThymeleafUtil;
@@ -32,7 +32,7 @@ public class BaseServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         templateEngine = ThymeleafUtil.INSTANCE.getTemplateEngine();
-        userService = new UserService(UserRepositoryDb.getInstance());
+        userService = new UserService(UserRepository.getInstance());
 
         super.init(config);
     }

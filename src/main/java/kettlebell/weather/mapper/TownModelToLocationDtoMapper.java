@@ -2,8 +2,8 @@ package kettlebell.weather.mapper;
 
 import java.util.Locale;
 
-import kettlebell.weather.dto.LocationDto;
-import kettlebell.weather.model.TownModel;
+import kettlebell.weather.dto.user.LocationDto;
+import kettlebell.weather.dto.api.TownModel;
 
 public class TownModelToLocationDtoMapper implements Mapper<LocationDto, TownModel> {
     private static final TownModelToLocationDtoMapper INSTANCE = new TownModelToLocationDtoMapper();

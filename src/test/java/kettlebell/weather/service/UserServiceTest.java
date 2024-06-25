@@ -1,17 +1,17 @@
 package kettlebell.weather.service;
 
-import kettlebell.weather.dto.CreateUserDto;
-import kettlebell.weather.entity.Location;
-import kettlebell.weather.entity.Seance;
-import kettlebell.weather.entity.User;
+import kettlebell.weather.dto.user.CreateUserDto;
+import kettlebell.weather.dto.db.Location;
+import kettlebell.weather.dto.db.Seance;
+import kettlebell.weather.dto.db.User;
 import kettlebell.weather.exception.EntityAlreadyExistsException;
 import kettlebell.weather.exception.SeanceEndedException;
 import kettlebell.weather.exception.UserNotFoundException;
 import kettlebell.weather.exception.validator.heirs.LoginValidatorException;
 import kettlebell.weather.exception.validator.heirs.PasswordValidationException;
-import kettlebell.weather.repository.localdb.SeanceRepositoryDb;
-import kettlebell.weather.repository.localdb.UserRepositoryDb;
-import kettlebell.weather.util.HibernateRunner;
+import kettlebell.weather.repository.SeanceRepository;
+import kettlebell.weather.repository.UserRepository;
+import kettlebell.weather.util.HibernatePropertiesFactory;
 import kettlebell.weather.util.ScheduledExecutorServiceUtil;
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.*;
@@ -32,9 +32,9 @@ class UserServiceTest {
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Location.class);
         configuration.addAnnotatedClass(Seance.class);
-        HibernateRunner.getInstanceSessionFactory(configuration);
+        HibernatePropertiesFactory.getInstanceSessionFactory(configuration);
 
-        userService = new UserService(UserRepositoryDb.getInstance());
+        userService = new UserService(UserRepository.getInstance());
         userService.create(CreateUserDto.builder().login("Bob").password("Hello").build());
     }
 
@@ -70,7 +70,7 @@ class UserServiceTest {
         userService.create(CreateUserDto.builder().login(login).password("World").build());
         Long id = userService.authenticateByLogin(login);
 
-        assertEquals(login, UserRepositoryDb.getInstance().findById(id).getLogin());
+        assertEquals(login, UserRepository.getInstance().findById(id).getLogin());
 
     }
 
@@ -105,7 +105,7 @@ class UserServiceTest {
         String login = "Jack";
         String password = "77777";
         userService.create(CreateUserDto.builder().login(login).password(password).build());
-        userService = new UserService(UserRepositoryDb.getInstance());
+        userService = new UserService(UserRepository.getInstance());
         EntityAlreadyExistsException exception = assertThrows(EntityAlreadyExistsException.class,
                 () -> userService.create(CreateUserDto.builder().login(login).password(password).build()));
         String expectedCode = "400";
@@ -117,9 +117,9 @@ class UserServiceTest {
 
     @Test
     void expiredSeance() {
-        User user = UserRepositoryDb.getInstance().findByLogin("Bob");
-        String keySeance = new SeanceService(SeanceRepositoryDb.getInstance(), UserRepositoryDb.getInstance()).startSeanceAndGetKey(user.getId());
-        Seance seance = SeanceRepositoryDb.getInstance().findById(keySeance);
+        User user = UserRepository.getInstance().findByLogin("Bob");
+        String keySeance = new SeanceService(SeanceRepository.getInstance(), UserRepository.getInstance()).startSeanceAndGetKey(user.getId());
+        Seance seance = SeanceRepository.getInstance().findByIdWithUser(keySeance);
 
         assertEquals(user.getLogin(), seance.getUser().getLogin());
 
@@ -130,7 +130,7 @@ class UserServiceTest {
             throw new RuntimeException(e);
         }
 
-        SeanceEndedException exception = assertThrows(SeanceEndedException.class, () -> SeanceRepositoryDb.getInstance().updateOrSeanceIsOver(seance));
+        SeanceEndedException exception = assertThrows(SeanceEndedException.class, () -> SeanceRepository.getInstance().updateOrSeanceIsOver(seance));
         String expectedMessage = "Your session has ended please authenticate";
         String actualMessage = exception.getError().getMessage();
 

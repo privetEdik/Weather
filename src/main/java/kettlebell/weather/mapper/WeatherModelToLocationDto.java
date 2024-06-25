@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Locale;
 
-import kettlebell.weather.dto.LocationDto;
-import kettlebell.weather.model.weather.WeatherModel;
+import kettlebell.weather.dto.user.LocationDto;
+import kettlebell.weather.dto.api.weather.WeatherModel;
 
 public class WeatherModelToLocationDto implements Mapper<LocationDto, WeatherModel> {
     private static final WeatherModelToLocationDto INSTANCE = new WeatherModelToLocationDto();
